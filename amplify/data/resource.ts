@@ -1,6 +1,7 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
+
 // First define your schema as you already have
 const schema = a.schema({
   BedrockResponse: a.customType({
@@ -12,12 +13,13 @@ const schema = a.schema({
     .query()
     .arguments({ ingredients: a.string().array() })
     .returns(a.ref("BedrockResponse"))
-    .authorization((allow) => [allow.authenticated()])
-    .handler(
-      a.handler.custom({
-        entry: "./bedrock.js",
-        dataSource: "bedrockDS",
-        permissions: [
+    .authorization([a.allow.public()])  // or whatever authorization you need
+    .function(
+      a.function()
+        .code('./bedrock.js')
+        .memory('512 MB')
+        .timeout('30 seconds')
+        .permissions([
           new PolicyStatement({
             resources: [
               "arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20241022-v2:0",
@@ -30,9 +32,8 @@ const schema = a.schema({
               "bedrock:GenerateQuery"
             ],
           })
-        ]
-      })
-    ),
+        ])
+    )
 });
 
 export type Schema = ClientSchema<typeof schema>;
