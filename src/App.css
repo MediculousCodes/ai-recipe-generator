@@ -1,3 +1,18 @@
+import React from 'react';
+import { RecipeGenerator } from './components/RecipeGenerator';
+import './App.css';
+
+function App() {
+  return (
+    <div className="App">
+      <RecipeGenerator />
+      {/* Other components */}
+    </div>
+  );
+}
+
+export default App;
+
 .app-container {
 
   margin: 0 auto;
